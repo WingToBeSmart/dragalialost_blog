@@ -1,0 +1,42 @@
+.card {
+    height: 300px;
+    overflow: hidden;
+}
+
+.card-image {
+    margin: 0;
+    padding: 0;
+    height: auto;
+    overflow: hidden;
+}
+
+.card-content {
+    height: 100px;
+}
+
+.section-area {
+    margin-top: 15px;
+    margin-left: 30px;
+    margin-bottom: 10px;
+}
+
+.section {
+    text-align: center;
+    border-radius: 8px 8px 8px 8px;
+    -webkit-box-shadow: 1px 3px 5px 0px rgba(0,0,0,0.65);
+    -moz-box-shadow: 1px 3px 5px 0px rgba(0,0,0,0.65);
+    box-shadow: 1px 3px 5px 0px rgba(0,0,0,0.65);
+}
+
+.section-title {
+    font-size: 14px;
+    font-variant: small-caps;
+}
+
+.section-image {
+    margin: 15px 10px;
+}
+
+.section-image img {
+    width: 100%;
+}

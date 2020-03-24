@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col s12 m8 l8 xl8">
+            <div class="row">
+                {% for new in news_response_lists %}
+                <div class="col s4">
+                    <div class="card">
+                        <div class="card-image">
+                            <a href="{{ new.1 }}"><img src="{{ new.0 }}" alt=""></a>
+                        </div>
+                        <div class="card-content">
+                            <p>{{ new.2 }}</p>
+                        </div>
+                        <div class="card-action">
+                            <a target="_blank" href="{{ new.3 }}">Visit Official Page</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col s12 m4 l4 xl4">
+            <div class="row">
+                <div class="section-area">
+                    <div class="section">
+                        <span class="section-title">Showcase</span>
+                        {% for showcase in showcase_response_lists %}
+                        <div class="section-image">
+                            <a href="{{ showcase.1 }}"><img src="{{ showcase.0 }}" alt=""></a>
+                        </div>
+                        <div class="section-content">
+                            <p>{{ showcase.2 }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="section-area">
+                    <div class="section">
+                        <span class="section-title">New Adventurers</span>
+                        <div class="row">
+                            {% for new_adventurer in new_adventurers_response_lists %}
+                            <div class="col s4">
+                                <div class="section-image">
+                                    <a href="{{ new_adventurer.1 }}"><img src="{{ new_adventurer.0 }}" alt=""></a>
+                                </div>
+                                <div class="section-content">
+                                    <p>{{ new_adventurer.2 }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="section-area">
+                    <div class="section">
+                        <span class="section-title">New Dragons</span>
+                        <div class="row">
+                            {% for new_dragon in new_dragons_response_lists %}
+                            <div class="col s4">
+                                <div class="section-image">
+                                    <a href="{{ new_dragon.1 }}"><img src="{{ new_dragon.0 }}" alt=""></a>
+                                </div>
+                                <div class="section-content">
+                                    <p>{{ new_dragon.2 }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="section-area">
+                    <div class="section">
+                        <span class="section-title">New Wymprints</span>
+                        <div class="row">
+                            {% for new_wyrmprint in new_wyrmprints_response_lists %}
+                            <div class="col s4">
+                                <div class="section-image">
+                                    <a href="{{ new_wyrmprint.1 }}"><img src="{{ new_wyrmprint.0 }}" alt=""></a>
+                                </div>
+                                <div class="section-content">
+                                    <p>{{ new_wyrmprint.2 }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
