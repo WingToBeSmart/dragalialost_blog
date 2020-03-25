@@ -9,17 +9,67 @@
                 <div class="col s4">
                     <div class="card">
                         <div class="card-image">
-                            <a href="{{ new.1 }}"><img src="{{ new.0 }}" alt=""></a>
+                            <a target="_blank" href="{{ new.1 }}"><img src="{{ new.0 }}" alt=""></a>
                         </div>
                         <div class="card-content">
                             <p>{{ new.2 }}</p>
                         </div>
                         <div class="card-action">
-                            <a target="_blank" href="{{ new.3 }}">Visit Official Page</a>
+                            <p>{{ new.3 }} - {{ new.4 }}</p>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
+            </div>
+            <div class="row">
+                <div class="col s6">
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                {% for th in void_battles_table_head %}
+                                {% if forloop.counter == 1 %}
+                                <th>Quest/Day</th>
+                                {% else %}
+                                <th>{{ th }}</th>
+                                {% endif %}
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tr in void_battles_table_body %}
+                            <tr>
+                                {% for item in tr %}
+                                <td>{{ item }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col s6">
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                {% for th in high_dragon_master_head %}
+                                {% if forloop.counter == 1 %}
+                                <th>Quest/Day</th>
+                                {% else %}
+                                <th>{{ th }}</th>
+                                {% endif %}
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tr in high_dragon_master_body %}
+                            <tr>
+                                {% for item in tr %}
+                                <td>{{ item }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="col s12 m4 l4 xl4">
@@ -76,7 +126,7 @@
                         <span class="section-title">New Wymprints</span>
                         <div class="row">
                             {% for new_wyrmprint in new_wyrmprints_response_lists %}
-                            <div class="col s4">
+                            <div class="col s3">
                                 <div class="section-image">
                                     <a href="{{ new_wyrmprint.1 }}"><img src="{{ new_wyrmprint.0 }}" alt=""></a>
                                 </div>
