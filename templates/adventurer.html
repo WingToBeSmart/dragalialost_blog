@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Adventurer List</h2>
+    <div class="row">
+        <div class="col s12">
+            <table class="responsive-table">
+                <thead>
+                    <tr>
+                        {% for th in adventurer_table_head %}
+                        <th>{{ th }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tr in adventurer_table_body %}
+                    <tr>
+                        {% for item in tr %}
+                        <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

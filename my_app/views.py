@@ -19,15 +19,6 @@ def home(request):
     response = requests.get(BASE_URL.format('/Dragalia_Lost_Wiki'))
     soup = BeautifulSoup(response.text, features='html.parser')
 
-    # table = soup.find('table', class_='wikitable center').tbody
-    # rows = table.find_all('tr')
-    # columns = [v.text.replace('\n', '') for v in rows[0].find_all('th')]
-    # df = pd.DataFrame(columns=columns)
-    # for i in range(1, len(rows)):
-    #     tds = rows[i].find_all('td')
-    #     values = [td.text.replace('\n', '') for td in tds]
-    #     df = df.append(pd.Series(values, index=columns), ignore_index=True)
-
     void_battles_table = soup.find_all('table', class_='wikitable center')[0]
     void_battles_table_body = []
     void_battles_table_head = [
@@ -128,3 +119,28 @@ def home(request):
 
     }
     return render(request, 'index.html', stuff_for_frontend)
+
+
+def adventurer(request):
+    response = requests.get(BASE_URL.format('/Adventurer_List'))
+    soup = BeautifulSoup(response.text, features='html.parser')
+
+    adventurer_table = soup.find('table', class_='wikitable sortable')
+    adventurer_table_body = []
+    adventurer_table_head = [th.text for th in adventurer_table.find_all('th')]
+    for row in adventurer_table.find_all('tr'):
+        adventurer_table_body.append(
+            [cell.get_text(strip=True) for cell in row.find_all('td')])
+
+    for row in adventurer_table.find_all('tr')[1:2]:
+        cells = row.find_all('td')
+        print(cells)
+        print(type(cells))
+        print(cells[0])
+
+    # render data to frontend
+    stuff_for_frontend = {
+        'adventurer_table_head': adventurer_table_head,
+        'adventurer_table_body': adventurer_table_body,
+    }
+    return render(request, 'adventurer.html', stuff_for_frontend)
