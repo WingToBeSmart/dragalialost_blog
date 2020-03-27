@@ -132,11 +132,11 @@ def adventurer(request):
         adventurer_table_body.append(
             [cell.get_text(strip=True) for cell in row.find_all('td')])
 
-    for row in adventurer_table.find_all('tr')[1:2]:
-        cells = row.find_all('td')
-        print(cells)
-        print(type(cells))
-        print(cells[0])
+    # for row in adventurer_table.find_all('tr')[1:2]:
+    #     cells = row.find_all('td')
+    #     print(cells)
+    #     print(type(cells))
+    #     print(cells[0])
 
     # render data to frontend
     stuff_for_frontend = {

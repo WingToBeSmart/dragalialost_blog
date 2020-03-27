@@ -5,7 +5,7 @@
     <h2>Adventurer List</h2>
     <div class="row">
         <div class="col s12">
-            <table class="responsive-table">
+            <table id="adventurer_table" class="table-responsive">
                 <thead>
                     <tr>
                         {% for th in adventurer_table_head %}
@@ -26,4 +26,16 @@
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#adventurer_table').bootstrapTable({
+        height: 800,
+        width: '100%',
+        pagination: true,
+        search: true,
+    });
+</script>
 {% endblock %}

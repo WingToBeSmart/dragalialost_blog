@@ -23,7 +23,7 @@
             </div>
             <div class="row">
                 <div class="col s6">
-                    <table class="responsive-table">
+                    <table id="void_battles_table" class="responsive-table">
                         <thead>
                             <tr>
                                 {% for th in void_battles_table_head %}
@@ -47,7 +47,7 @@
                     </table>
                 </div>
                 <div class="col s6">
-                    <table class="responsive-table">
+                    <table id="high_dragon_master_table" class="responsive-table">
                         <thead>
                             <tr>
                                 {% for th in high_dragon_master_head %}
@@ -142,4 +142,20 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#void_battles_table').bootstrapTable({
+        height: 700,
+        width: '100%',
+        pagination: true,
+        search: true,
+    });
+    $('#high_dragon_master_table').bootstrapTable({
+        height: '100%',
+        width: '100%',
+        search: true,
+    });
+</script>
 {% endblock %}
