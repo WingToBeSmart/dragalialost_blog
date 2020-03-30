@@ -232,3 +232,54 @@ def dragon(request):
     }
 
     return render(request, 'dragon.html', stuff_for_frontend)
+
+
+def wyrmprint(request):
+    response = requests.get(BASE_URL.format('/Wyrmprint_List'))
+    soup = BeautifulSoup(response.text, features='html.parser')
+
+    wyrumprint_table = soup.find('table', class_='wikitable sortable')
+    wyrumprint_table_body = []
+    wyrumprint_table_head = [cells.get_text(strip=True)
+                             for cells in wyrumprint_table.find_all('th')]
+
+    for row in wyrumprint_table.find_all('tr'):
+        cells = row.find_all('td')
+        for idx, item in enumerate(cells):
+            if(idx == 0):
+                cells[idx] = {
+                    'name': cells[idx].find('a').get('title'),
+                    'image': cells[idx].find('img').get('src'),
+                    'url': BASE_URL.format(cells[idx].find('a').get('href')),
+                }
+            elif(idx == 5 or idx == 6 or idx == 7):
+                image_list = []
+                name_list = []
+                url_list = []
+                for span_tag in cells[idx].find_all('span'):
+                    if(span_tag.find('img')):
+                        image_list.append(span_tag.find('img').get('src'))
+                    if(span_tag.find('a')):
+                        name_list.append(span_tag.find('a').get('title'))
+                        url_list.append(BASE_URL.format(
+                            span_tag.find('a').get('href')))
+
+                cells[idx] = {
+                    'ability_level': ['Lv. 1', 'Lv. 2', 'Lv. 3'],
+                    'ability_name': name_list,
+                    'ability_image': image_list,
+                    'ability_url': url_list,
+                    'ability_description': [i.text for i in cells[idx].find_all('div', class_="tooltiptext")],
+                }
+            else:
+                cells[idx] = cells[idx].get_text(strip=True)
+
+        wyrumprint_table_body.append(cells)
+
+    # render data to frontend
+    stuff_for_frontend = {
+        'wyrumprint_table_head': wyrumprint_table_head,
+        'wyrumprint_table_body': wyrumprint_table_body,
+    }
+
+    return render(request, 'wyrmprint.html', stuff_for_frontend)
