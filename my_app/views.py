@@ -127,20 +127,108 @@ def adventurer(request):
 
     adventurer_table = soup.find('table', class_='wikitable sortable')
     adventurer_table_body = []
-    adventurer_table_head = [th.text for th in adventurer_table.find_all('th')]
-    for row in adventurer_table.find_all('tr'):
-        adventurer_table_body.append(
-            [cell.get_text(strip=True) for cell in row.find_all('td')])
+    adventurer_table_head = []
 
-    # for row in adventurer_table.find_all('tr')[1:2]:
-    #     cells = row.find_all('td')
-    #     print(cells)
-    #     print(type(cells))
-    #     print(cells[0])
+    adventurer_table_head = adventurer_table.find_all('th')
+    for idx, item in enumerate(adventurer_table_head):
+        if(idx == 6 or idx == 7):
+            if("HP" in adventurer_table_head[idx].find('div', class_="tooltip").text.upper()):
+                name = "HP"
+            else:
+                name = "STR"
+            adventurer_table_head[idx] = {
+                'name': name,
+                'description': adventurer_table_head[idx].find('div', class_="tooltiptext").text,
+            }
+        else:
+            adventurer_table_head[idx] = adventurer_table_head[idx].get_text(
+                strip=True)
+
+    for row in adventurer_table.find_all('tr'):
+        cells = row.find_all('td')
+        for idx, item in enumerate(cells):
+            if(idx == 0):
+                cells[idx] = {
+                    'name': cells[idx].find('a').get('title'),
+                    'image': cells[idx].find('img').get('src'),
+                    'url': BASE_URL.format(cells[idx].find('a').get('href')),
+                }
+            elif(idx == 5):
+                cells[idx] = cells[idx].find('img').get('src')
+            elif(idx == 8 or idx == 9):
+                cells[idx] = {
+                    'skill_name': cells[idx].find('a').get('title'),
+                    'skill_image': cells[idx].find('img').get('src'),
+                    'skill_url': BASE_URL.format(cells[idx].find('a').get('href')),
+                    'skill_description': cells[idx].find('div', class_='tooltiptext').text.split(']')[0:-1],
+                }
+            else:
+                cells[idx] = cells[idx].get_text(strip=True)
+
+        adventurer_table_body.append(cells)
 
     # render data to frontend
     stuff_for_frontend = {
         'adventurer_table_head': adventurer_table_head,
         'adventurer_table_body': adventurer_table_body,
     }
+
     return render(request, 'adventurer.html', stuff_for_frontend)
+
+
+def dragon(request):
+    response = requests.get(BASE_URL.format('/Dragon_List'))
+    soup = BeautifulSoup(response.text, features='html.parser')
+
+    dragon_table = soup.find('table', class_='wikitable sortable')
+    dragon_table_body = []
+    dragon_table_head = [cells.get_text(strip=True)
+                         for cells in dragon_table.find_all('th')]
+
+    for row in dragon_table.find_all('tr'):
+        cells = row.find_all('td')
+        for idx, item in enumerate(cells):
+            if(idx == 0):
+                cells[idx] = {
+                    'name': cells[idx].find('a').get('title'),
+                    'image': cells[idx].find('img').get('src'),
+                    'url': BASE_URL.format(cells[idx].find('a').get('href')),
+                }
+            elif(idx == 6):
+                cells[idx] = {
+                    'skill_name': cells[idx].find('a').get('title'),
+                    'skill_image': cells[idx].find('img').get('src'),
+                    'skill_url': BASE_URL.format(cells[idx].find('a').get('href')),
+                    'skill_description': cells[idx].find('div', class_='tooltiptext').text.split(']')[0:-1],
+                }
+            elif(idx == 7 or idx == 8):
+                image_list = []
+                name_list = []
+                url_list = []
+                for span_tag in cells[idx].find_all('span'):
+                    if(span_tag.find('img')):
+                        image_list.append(span_tag.find('img').get('src'))
+                    if(span_tag.find('a')):
+                        name_list.append(span_tag.find('a').get('title'))
+                        url_list.append(BASE_URL.format(
+                            span_tag.find('a').get('href')))
+
+                cells[idx] = {
+                    'ability_level': ['Lv. 1', 'Lv. 2'],
+                    'ability_name': name_list,
+                    'ability_image': image_list,
+                    'ability_url': url_list,
+                    'ability_description': [i.text for i in cells[idx].find_all('div', class_="tooltiptext")],
+                }
+            else:
+                cells[idx] = cells[idx].get_text(strip=True)
+
+        dragon_table_body.append(cells)
+
+    # render data to frontend
+    stuff_for_frontend = {
+        'dragon_table_head': dragon_table_head,
+        'dragon_table_body': dragon_table_body,
+    }
+
+    return render(request, 'dragon.html', stuff_for_frontend)

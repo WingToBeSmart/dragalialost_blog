@@ -2,32 +2,36 @@
 
 {% block content %}
 <div class="container">
-    <h2>Adventurer List</h2>
+    <h2>Dragon List</h2>
     <div class="row">
         <div class="col s12">
-            <table id="adventurer_table" class="table-responsive">
+            <table id="dragon_table" class="responsive-table">
                 <thead>
                     <tr>
-                        {% for th in adventurer_table_head %}
-                        {% if forloop.counter == 7 or forloop.counter == 8 %}
-                        <th>{{ th.name|title }}</th>
-                        {% else %}
+                        {% for th in dragon_table_head %}
                         <th>{{ th|title }}</th>
-                        {% endif %}
                         {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for tr in adventurer_table_body %}
+                    {% for tr in dragon_table_body %}
                     <tr>
                         {% for item in tr %}
                         <!-- <td>{{ item | safe }}</td> -->
                         {% if forloop.counter == 1 %}
                         <td><a href={{item.url}}><img src={{item.image}}></a></td>
-                        {% elif forloop.counter == 6 %}
-                        <td><img src={{item}}></td>
-                        {% elif forloop.counter == 9 or forloop.counter == 10 %}
+                        {% elif forloop.counter == 7 %}
                         <td><a href={{item.skill_url}}><img src={{item.skill_image}}>{{item.skill_name}}</a></td>
+                        {% elif forloop.counter == 8 or forloop.counter == 9 %}
+                        <td>
+                            <span class="">{{item.ability_level.0}}:</span>
+                            <a href={{item.ability_url.0}}><img src={{item.ability_image.0}}>{{item.ability_name.0}}</a>
+                            <p class="">{{item.ability_description.0}}</p>
+                            <br>
+                            <span class="">{{item.ability_level.1}}:</span>
+                            <a href={{item.ability_url.1}}><img src={{item.ability_image.1}}>{{item.ability_name.1}}</a>
+                            <p class="">{{item.ability_description.1}}</p>
+                        </td>
                         {% else %}
                         <td>{{ item | safe }}</td>
                         {% endif %}
@@ -44,9 +48,7 @@
 
 {% block script %}
 <script>
-    $('#adventurer_table').bootstrapTable({
-        height: 800,
-        width: '100%',
+    $('#dragon_table').bootstrapTable({
         pagination: true,
         search: true,
     });
