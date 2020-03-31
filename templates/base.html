@@ -10,8 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link href="https://unpkg.com/bootstrap-table@1.16.0/dist/themes/materialize/bootstrap-table-materialize.min.css"
-        rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
     <title>Dragalialost Blog</title>
 </head>
 
@@ -23,7 +22,10 @@
             <ul class="right hide-on-med-and-down">
                 <li><a href="/">Home</a></li>
                 <li><a href="/adventurer">Adventurers</a></li>
+                <li><a href="/dragon">Dragons</a></li>
                 <li><a href="/wyrmprint">Wyrmprint</a></li>
+                <li><a href="/weapon">Weapon</a></li>
+                <li><a href="/blog">Blog</a></li>
             </ul>
         </div>
     </nav>
@@ -33,14 +35,15 @@
         <li><a href="/adventurer">Adventurers</a></li>
         <li><a href="/dragon">Dragons</a></li>
         <li><a href="/wyrmprint">Wyrmprint</a></li>
+        <li><a href="/weapon">Weapon</a></li>
+        <li><a href="/blog">Blog</a></li>
     </ul>
     {% block content %}
     {% endblock %}
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
-    <script
-        src="https://unpkg.com/bootstrap-table@1.16.0/dist/themes/materialize/bootstrap-table-materialize.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
     {% block script %}
     {% endblock %}
 </body>

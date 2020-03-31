@@ -5,7 +5,7 @@
     <h2>Dragon List</h2>
     <div class="row">
         <div class="col s12">
-            <table id="dragon_table" class="responsive-table">
+            <table id="dragon_table" class="table table-hover row-border responsive">
                 <thead>
                     <tr>
                         {% for th in dragon_table_head %}
@@ -17,19 +17,20 @@
                     {% for tr in dragon_table_body %}
                     <tr>
                         {% for item in tr %}
-                        <!-- <td>{{ item | safe }}</td> -->
                         {% if forloop.counter == 1 %}
                         <td><a href={{item.url}}><img src={{item.image}}></a></td>
                         {% elif forloop.counter == 7 %}
-                        <td><a href={{item.skill_url}}><img src={{item.skill_image}}>{{item.skill_name}}</a></td>
+                        <td><a href={{item.skill_url}}><img src={{item.skill_image}}>&nbsp;{{item.skill_name}}</a></td>
                         {% elif forloop.counter == 8 or forloop.counter == 9 %}
                         <td>
                             <span class="">{{item.ability_level.0}}:</span>
-                            <a href={{item.ability_url.0}}><img src={{item.ability_image.0}}>{{item.ability_name.0}}</a>
+                            <a href={{item.ability_url.0}}><img
+                                    src={{item.ability_image.0}}>&nbsp;{{item.ability_name.0}}</a>
                             <p class="">{{item.ability_description.0}}</p>
                             <br>
                             <span class="">{{item.ability_level.1}}:</span>
-                            <a href={{item.ability_url.1}}><img src={{item.ability_image.1}}>{{item.ability_name.1}}</a>
+                            <a href={{item.ability_url.1}}><img
+                                    src={{item.ability_image.1}}>&nbsp;{{item.ability_name.1}}</a>
                             <p class="">{{item.ability_description.1}}</p>
                         </td>
                         {% else %}
@@ -48,9 +49,15 @@
 
 {% block script %}
 <script>
-    $('#dragon_table').bootstrapTable({
-        pagination: true,
-        search: true,
+    $('#dragon_table').DataTable({
+        "order": [9, 'DESC'],
+        "scrollY": "80vh",
+        scrollCollapse: true,
+        paging: true,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+        dom: 'Bfrtip',
+        language: { search: "" },
     });
 </script>
 {% endblock %}

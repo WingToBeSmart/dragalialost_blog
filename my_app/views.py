@@ -4,6 +4,7 @@ from django.shortcuts import render
 from bs4 import BeautifulSoup
 from requests.compat import quote_plus
 from selenium import webdriver
+from datetime import datetime
 # Create your views here.
 
 BASE_URL = 'https://dragalialost.gamepedia.com{}'
@@ -16,6 +17,7 @@ def home(request):
     new_adventurers_response_lists = []
     new_dragons_response_lists = []
     new_wyrmprints_response_lists = []
+    new_mana_spirals_response_lists = []
     response = requests.get(BASE_URL.format('/Dragalia_Lost_Wiki'))
     soup = BeautifulSoup(response.text, features='html.parser')
 
@@ -23,7 +25,7 @@ def home(request):
     void_battles_table_body = []
     void_battles_table_head = [
         th.text for th in void_battles_table.find_all('th')]
-    for row in void_battles_table.find_all('tr'):
+    for row in void_battles_table.find_all('tr')[1:]:
         void_battles_table_body.append(
             [cell.get_text(strip=True) for cell in row.find_all('td')])
 
@@ -32,7 +34,7 @@ def home(request):
     high_dragon_master_body = []
     high_dragon_master_head = [
         th.text for th in high_dragon_master_table.find_all('th')]
-    for row in high_dragon_master_table.find_all('tr'):
+    for row in high_dragon_master_table.find_all('tr')[1:]:
         high_dragon_master_body.append(
             [cell.get_text(strip=True) for cell in row.find_all('td')])
 
@@ -105,6 +107,18 @@ def home(request):
             new_wyrmprints_response_lists.append(
                 (wyrmprint_image, BASE_URL.format(wyrmprint_url), wyrmprint_name))
 
+    # for render new mana spirals
+    mana_spirals_listings = soup.find_all('div', attrs={
+        'style': 'width:100%;margin:5px;text-align:center;border:1px solid #9aa99a;'})[4:5]
+
+    for mana_spirals_listing in mana_spirals_listings:
+        for item in mana_spirals_listing.find_all('div', class_="tooltip"):
+            mana_spirals_image = item.find('img').get('src')
+            mana_spirals_url = item.find('a').get('href')
+            mana_spirals_name = item.find('a').get('title')
+            new_mana_spirals_response_lists.append(
+                (mana_spirals_image, BASE_URL.format(mana_spirals_url), mana_spirals_name))
+
     # render all list to frontend
     stuff_for_frontend = {
         'news_response_lists': news_response_lists,
@@ -112,6 +126,7 @@ def home(request):
         'new_adventurers_response_lists': new_adventurers_response_lists,
         'new_dragons_response_lists': new_dragons_response_lists,
         'new_wyrmprints_response_lists': new_wyrmprints_response_lists,
+        'new_mana_spirals_response_lists': new_mana_spirals_response_lists,
         'void_battles_table_head': void_battles_table_head,
         'void_battles_table_body': void_battles_table_body,
         'high_dragon_master_head': high_dragon_master_head,
@@ -144,7 +159,7 @@ def adventurer(request):
             adventurer_table_head[idx] = adventurer_table_head[idx].get_text(
                 strip=True)
 
-    for row in adventurer_table.find_all('tr'):
+    for row in adventurer_table.find_all('tr')[1:]:
         cells = row.find_all('td')
         for idx, item in enumerate(cells):
             if(idx == 0):
@@ -162,6 +177,9 @@ def adventurer(request):
                     'skill_url': BASE_URL.format(cells[idx].find('a').get('href')),
                     'skill_description': cells[idx].find('div', class_='tooltiptext').text.split(']')[0:-1],
                 }
+            elif(idx == 10):
+                cells[idx] = datetime.strptime(
+                    cells[idx].get_text(strip=True), "%b %d, %Y").strftime('%Y-%m-%d')
             else:
                 cells[idx] = cells[idx].get_text(strip=True)
 
@@ -185,7 +203,7 @@ def dragon(request):
     dragon_table_head = [cells.get_text(strip=True)
                          for cells in dragon_table.find_all('th')]
 
-    for row in dragon_table.find_all('tr'):
+    for row in dragon_table.find_all('tr')[1:]:
         cells = row.find_all('td')
         for idx, item in enumerate(cells):
             if(idx == 0):
@@ -220,6 +238,9 @@ def dragon(request):
                     'ability_url': url_list,
                     'ability_description': [i.text for i in cells[idx].find_all('div', class_="tooltiptext")],
                 }
+            elif(idx == 9):
+                cells[idx] = datetime.strptime(
+                    cells[idx].get_text(strip=True), "%b %d, %Y").strftime('%Y-%m-%d')
             else:
                 cells[idx] = cells[idx].get_text(strip=True)
 
@@ -238,12 +259,12 @@ def wyrmprint(request):
     response = requests.get(BASE_URL.format('/Wyrmprint_List'))
     soup = BeautifulSoup(response.text, features='html.parser')
 
-    wyrumprint_table = soup.find('table', class_='wikitable sortable')
-    wyrumprint_table_body = []
-    wyrumprint_table_head = [cells.get_text(strip=True)
-                             for cells in wyrumprint_table.find_all('th')]
+    wyrmprint_table = soup.find('table', class_='wikitable sortable')
+    wyrmprint_table_body = []
+    wyrmprint_table_head = [cells.get_text(strip=True)
+                            for cells in wyrmprint_table.find_all('th')]
 
-    for row in wyrumprint_table.find_all('tr'):
+    for row in wyrmprint_table.find_all('tr')[1:]:
         cells = row.find_all('td')
         for idx, item in enumerate(cells):
             if(idx == 0):
@@ -271,15 +292,83 @@ def wyrmprint(request):
                     'ability_url': url_list,
                     'ability_description': [i.text for i in cells[idx].find_all('div', class_="tooltiptext")],
                 }
+            elif(idx == 8):
+                cells[idx] = datetime.strptime(
+                    cells[idx].get_text(strip=True), "%b %d, %Y").strftime('%Y-%m-%d')
             else:
                 cells[idx] = cells[idx].get_text(strip=True)
 
-        wyrumprint_table_body.append(cells)
+        wyrmprint_table_body.append(cells)
 
     # render data to frontend
     stuff_for_frontend = {
-        'wyrumprint_table_head': wyrumprint_table_head,
-        'wyrumprint_table_body': wyrumprint_table_body,
+        'wyrmprint_table_head': wyrmprint_table_head,
+        'wyrmprint_table_body': wyrmprint_table_body,
     }
 
     return render(request, 'wyrmprint.html', stuff_for_frontend)
+
+
+def weapon(request):
+    response = requests.get(BASE_URL.format('/Weapon_List'))
+    soup = BeautifulSoup(response.text, features='html.parser')
+
+    weapon_table = soup.find('table', class_='wikitable sortable center')
+    weapon_table_body = []
+    weapon_table_head = [cells.get_text(strip=True)
+                         for cells in weapon_table.find_all('th')]
+
+    for row in weapon_table.find_all('tr')[1:]:
+        cells = row.find_all('td')
+        for idx, item in enumerate(cells):
+            if(idx == 0):
+                cells[idx] = {
+                    'name': cells[idx].find('a').get('title'),
+                    'image': cells[idx].find('img').get('src'),
+                    'url': BASE_URL.format(cells[idx].find('a').get('href')),
+                }
+            elif(idx == 7):
+                image_list = []
+                name_list = []
+                url_list = []
+                for span_tag in cells[idx].find_all('span'):
+                    if(span_tag.find('img')):
+                        image_list.append(span_tag.find('img').get('src'))
+                    if(span_tag.find('a')):
+                        name_list.append(span_tag.find('a').get('title'))
+                        url_list.append(BASE_URL.format(
+                            span_tag.find('a').get('href')))
+                cells[idx] = {
+                    'skill_level': ['Lv. 1', 'Lv. 2'],
+                    'skill_name': name_list,
+                    'skill_image': image_list,
+                    'skill_url': url_list,
+                    'skill_description': cells[idx].text.split(']')[0:-1],
+                }
+            elif(idx == 8 or idx == 9):
+                if(cells[idx].find('div', class_='tooltip')):
+                    cells[idx] = {
+                        'ability_name': cells[idx].find('a').get('title'),
+                        'ability_image': cells[idx].find('img').get('src'),
+                        'ability_url': BASE_URL.format(cells[idx].find('a').get('href')),
+                        'ability_description': cells[idx].find('div', class_='tooltiptext').text,
+                    }
+            elif(idx == 10):
+                cells[idx] = datetime.strptime(
+                    cells[idx].get_text(strip=True), "%b %d, %Y").strftime('%Y-%m-%d')
+            else:
+                cells[idx] = cells[idx].get_text(strip=True)
+
+        weapon_table_body.append(cells)
+
+    # render data to frontend
+    stuff_for_frontend = {
+        'weapon_table_head': weapon_table_head,
+        'weapon_table_body': weapon_table_body,
+    }
+
+    return render(request, 'weapon.html', stuff_for_frontend)
+
+
+def blog(request):
+    return render(request, 'blog.html')
