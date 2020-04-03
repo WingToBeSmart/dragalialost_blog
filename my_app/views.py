@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from requests.compat import quote_plus
 from selenium import webdriver
 from datetime import datetime
+from .models import Adventurer, Skill
 # Create your views here.
 
 BASE_URL = 'https://dragalialost.gamepedia.com{}'

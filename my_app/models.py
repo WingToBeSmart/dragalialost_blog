@@ -11,14 +11,15 @@ class Skill(models.Model):
     name = models.CharField(max_length=50)
     icon = models.ImageField(upload_to=upload_location, blank=True, null=True,
                              width_field="width_field", height_field="height_field")
-    level_1 = models.CharField(max_length=255)
-    level_2 = models.CharField(max_length=255)
-    level_3 = models.CharField(max_length=255)
+    level_1 = models.CharField(max_length=255, blank=True, null=True)
+    level_2 = models.CharField(max_length=255, blank=True, null=True)
+    level_3 = models.CharField(max_length=255, blank=True, null=True)
+    level_4 = models.CharField(max_length=255, blank=True, null=True)
 
 
 class Adventurer(models.Model):
     name = models.CharField(unique=True, max_length=255)
-    classname = models.CharField(max_length=10)
+    class_name = models.CharField(max_length=10)
     element = models.CharField(max_length=10)
     weapon = models.CharField(max_length=15)
     rarity = models.CharField(max_length=1)
