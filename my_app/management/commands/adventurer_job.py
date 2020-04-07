@@ -1,9 +1,7 @@
 
 import requests
-import time
 from bs4 import BeautifulSoup
 from requests.compat import quote_plus
-from selenium import webdriver
 from datetime import datetime
 from my_app.models import Adventurer, Skill, AdventurerAbility
 from django.core.management.base import BaseCommand

@@ -8,29 +8,47 @@
             <table id="adventurer_table" class="table table-hover row-border responsive">
                 <thead>
                     <tr>
-                        {% for th in adventurer_table_head %}
-                        {% if forloop.counter == 7 or forloop.counter == 8 %}
-                        <th>{{ th.name|title }}</th>
-                        {% else %}
-                        <th>{{ th|title }}</th>
-                        {% endif %}
-                        {% endfor %}
+                        <th>Icon</th>
+                        <th>Name</th>
+                        <th>Title</th>
+                        <th>Class</th>
+                        <th>Rarity</th>
+                        <th>Element</th>
+                        <th>Weapon</th>
+                        <th>HP</th>
+                        <th>Str</th>
+                        <th>Skill 1</th>
+                        <th>Skill 2</th>
+                        <th>Co-Ability</th>
+                        <th>Chain Co-Ability</th>
+                        <th>Ability 1</th>
+                        <th>Ability 2</th>
+                        <th>Ability 3</th>
+                        <th>Release Date</th>
+                        <th>Obtain</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for tr in adventurer_table_body %}
+                    {% for adv in adventurer_list %}
                     <tr>
-                        {% for item in tr %}
-                        {% if forloop.counter == 1 %}
-                        <td><a href={{item.url}}><img src={{item.image}}></a></td>
-                        {% elif forloop.counter == 6 %}
-                        <td><img src={{item}}></td>
-                        {% elif forloop.counter == 9 or forloop.counter == 10 %}
-                        <td><a href={{item.skill_url}}><img src={{item.skill_image}}>&nbsp;{{item.skill_name}}</a></td>
-                        {% else %}
-                        <td>{{ item | safe }}</td>
-                        {% endif %}
-                        {% endfor %}
+                        <td><a href={{adv.url}}><img src={{adv.icon}}></a></td>
+                        <td>{{ adv.name }}</td>
+                        <td>{{ adv.title }}</td>
+                        <td>{{ adv.class_name }}</td>
+                        <td>{{ adv.rarity }}</td>
+                        <td>{{ adv.element }}</td>
+                        <td>{{ adv.weapon }}</td>
+                        <td>{{ adv.hp }}</td>
+                        <td>{{ adv.Str }}</td>
+                        <td>{{ adv.skill_1.name }}</td>
+                        <td>{{ adv.skill_2.name }}</td>
+                        <td><img src={{adv.co_ability.icon}}>&nbsp;{{adv.co_ability.name}}</td>
+                        <td><img src={{adv.chain_co_ability.icon}}>&nbsp;{{adv.chain_co_ability.name}}</td>
+                        <td><img src={{adv.ability_1.icon}}>&nbsp;{{adv.ability_1.name}}</td>
+                        <td><img src={{adv.ability_2.icon}}>&nbsp;{{adv.ability_2.name}}</td>
+                        <td><img src={{adv.ability_3.icon}}>&nbsp;{{adv.ability_3.name}}</td>
+                        <td>{{adv.release_date|date:'Y-m-d H:i'}}</td>
+                        <td>{{adv.obtained_form}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

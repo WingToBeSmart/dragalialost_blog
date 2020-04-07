@@ -9,13 +9,13 @@
                 <div class="col s4">
                     <div class="card">
                         <div class="card-image">
-                            <a target="_blank" href="{{ new.1 }}"><img src="{{ new.0 }}" alt=""></a>
+                            <a target="_blank" href="{{ new.url }}"><img src="{{ new.image }}" alt=""></a>
                         </div>
                         <div class="card-content">
-                            <p>{{ new.2 }}</p>
+                            <p>{{ new.name }}</p>
                         </div>
                         <div class="card-action">
-                            <p>{{ new.3 }} - {{ new.4 }}</p>
+                            <p>{{ new.release_date|date:'Y-m-d H:i' }} - {{ new.category }}</p>
                         </div>
                     </div>
                 </div>

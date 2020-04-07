@@ -5,15 +5,13 @@ from bs4 import BeautifulSoup
 from requests.compat import quote_plus
 from selenium import webdriver
 from datetime import datetime
-from .models import Adventurer, Skill
+from .models import Adventurer, Skill, News, AdventurerAbility, Wyrmprint, Dragon, WeaponAbility, Weapon
 # Create your views here.
 
 BASE_URL = 'https://dragalialost.gamepedia.com{}'
-NEWS_URL = 'https://dragalialost.com{}'
 
 
 def home(request):
-    news_response_lists = []
     showcase_response_lists = []
     new_adventurers_response_lists = []
     new_dragons_response_lists = []
@@ -38,30 +36,6 @@ def home(request):
     for row in high_dragon_master_table.find_all('tr')[1:]:
         high_dragon_master_body.append(
             [cell.get_text(strip=True) for cell in row.find_all('td')])
-
-    # for render news
-    # options = webdriver.ChromeOptions()
-    # options.add_argument('headless')
-    # driver = webdriver.Chrome(chrome_options=options)
-    # driver.get(NEWS_URL.format('/cht'))
-    # html = driver.execute_script("return document.documentElement.outerHTML")
-    # sel_soup = BeautifulSoup(html, features='html.parser')
-
-    # new_list = sel_soup.find_all('ul', class_='news-list')
-    # for ul_tag in new_list:
-    #     for li_tag in ul_tag.find_all('li'):
-    #         new_list_url = NEWS_URL.format(li_tag.find('a').get('href'))
-    #         if "http" in li_tag.find('img').get('src'):
-    #             new_list_image = li_tag.find('img').get('src')
-    #         else:
-    #             new_list_image = NEWS_URL.format(li_tag.find('img').get('src'))
-    #         new_list_title = li_tag.find(
-    #             'p', class_='title').get_text(strip=True)
-    #         new_list_time = li_tag.find(
-    #             'div', class_='time').get_text(strip=True)[0:16]
-    #         new_list_cat = li_tag.find('span').get_text(strip=True)
-    #         news_response_lists.append(
-    #             (new_list_image, new_list_url, new_list_title, new_list_time, new_list_cat))
 
     # for render showcase
     showcase_lists = soup.find_all('div', class_="SummonShowcaseMP")
@@ -122,7 +96,7 @@ def home(request):
 
     # render all list to frontend
     stuff_for_frontend = {
-        'news_response_lists': news_response_lists,
+        'news_response_lists': News.objects.all(),
         'showcase_response_lists': showcase_response_lists,
         'new_adventurers_response_lists': new_adventurers_response_lists,
         'new_dragons_response_lists': new_dragons_response_lists,
@@ -138,58 +112,11 @@ def home(request):
 
 
 def adventurer(request):
-    response = requests.get(BASE_URL.format('/Adventurer_List'))
-    soup = BeautifulSoup(response.text, features='html.parser')
-
-    adventurer_table = soup.find('table', class_='wikitable sortable')
-    adventurer_table_body = []
-    adventurer_table_head = []
-
-    adventurer_table_head = adventurer_table.find_all('th')
-    for idx, item in enumerate(adventurer_table_head):
-        if(idx == 6 or idx == 7):
-            if("HP" in adventurer_table_head[idx].find('div', class_="tooltip").text.upper()):
-                name = "HP"
-            else:
-                name = "STR"
-            adventurer_table_head[idx] = {
-                'name': name,
-                'description': adventurer_table_head[idx].find('div', class_="tooltiptext").text,
-            }
-        else:
-            adventurer_table_head[idx] = adventurer_table_head[idx].get_text(
-                strip=True)
-
-    for row in adventurer_table.find_all('tr')[1:]:
-        cells = row.find_all('td')
-        for idx, item in enumerate(cells):
-            if(idx == 0):
-                cells[idx] = {
-                    'name': cells[idx].find('a').get('title'),
-                    'image': cells[idx].find('img').get('src'),
-                    'url': BASE_URL.format(cells[idx].find('a').get('href')),
-                }
-            elif(idx == 5):
-                cells[idx] = cells[idx].find('img').get('src')
-            elif(idx == 8 or idx == 9):
-                cells[idx] = {
-                    'skill_name': cells[idx].find('a').get('title'),
-                    'skill_image': cells[idx].find('img').get('src'),
-                    'skill_url': BASE_URL.format(cells[idx].find('a').get('href')),
-                    'skill_description': cells[idx].find('div', class_='tooltiptext').text.split(']')[0:-1],
-                }
-            elif(idx == 10):
-                cells[idx] = datetime.strptime(
-                    cells[idx].get_text(strip=True), "%b %d, %Y").strftime('%Y-%m-%d')
-            else:
-                cells[idx] = cells[idx].get_text(strip=True)
-
-        adventurer_table_body.append(cells)
+    adventurer = Adventurer.objects.order_by('-release_date')
 
     # render data to frontend
     stuff_for_frontend = {
-        'adventurer_table_head': adventurer_table_head,
-        'adventurer_table_body': adventurer_table_body,
+        'adventurer_list': adventurer,
     }
 
     return render(request, 'adventurer.html', stuff_for_frontend)
