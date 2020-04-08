@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load thumbnail %}
 
 {% block content %}
 <div class="container">
@@ -8,39 +9,79 @@
             <table id="dragon_table" class="table table-hover row-border responsive">
                 <thead>
                     <tr>
-                        {% for th in dragon_table_head %}
-                        <th>{{ th|title }}</th>
-                        {% endfor %}
+                        <th>Icon</th>
+                        <th>Name</th>
+                        <th>Rarity</th>
+                        <th>Element</th>
+                        <th>HP</th>
+                        <th>Str</th>
+                        <th>Skill</th>
+                        <th>Ability 1</th>
+                        <th>Ability 2</th>
+                        <th>Release Date</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for tr in dragon_table_body %}
+                    {% for dra in dragon_list %}
                     <tr>
-                        {% for item in tr %}
-                        {% if forloop.counter == 1 %}
-                        <td><a href={{item.url}}><img src={{item.image}}></a></td>
-                        {% elif forloop.counter == 7 %}
-                        <td><a href={{item.skill_url}}><img src={{item.skill_image}}>&nbsp;{{item.skill_name}}</a></td>
-                        {% elif forloop.counter == 8 or forloop.counter == 9 %}
                         <td>
-                            <span class="">{{item.ability_level.0}}:</span>
-                            <a href={{item.ability_url.0}}><img
-                                    src={{item.ability_image.0}}>&nbsp;{{item.ability_name.0}}</a>
-                            <p class="">{{item.ability_description.0}}</p>
-                            <br>
-                            <span class="">{{item.ability_level.1}}:</span>
-                            <a href={{item.ability_url.1}}><img
-                                    src={{item.ability_image.1}}>&nbsp;{{item.ability_name.1}}</a>
-                            <p class="">{{item.ability_description.1}}</p>
+                            <a href={{dra.url}}>
+                                {% thumbnail dra.icon "60x60"  as im %}
+                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                                {% endthumbnail %}
+                            </a>
                         </td>
-                        {% else %}
-                        <td>{{ item | safe }}</td>
-                        {% endif %}
-                        {% endfor %}
+                        <td>{{ dra.name }}</td>
+                        <td>{{ dra.rarity }}</td>
+                        <td>{{ dra.element }}</td>
+                        <td>{{ dra.hp }}</td>
+                        <td>{{ dra.Str }}</td>
+                        <td>{{ dra.skill }}</td>
+                        <td>
+                            {% for ab in dra.ability_1.all %}
+                            {% thumbnail ab.icon "24x24"  as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                            {% endthumbnail %}
+                            &nbsp;
+                            {{ab.name}}
+                            <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for ab in dra.ability_2.all %}
+                            {% thumbnail ab.icon "24x24"  as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                            {% endthumbnail %}
+                            &nbsp;
+                            {{ab.name}}
+                            <br>
+                            {% endfor %}
+                        </td>
+                        <td>{{dra.release_date|date:'Y-m-d'}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <br>
+            {% if is_paginated %}
+            <nav>
+                <ul class="pagination">
+                    {% if dragon_list.has_previous %}
+                    <li class="page-item"><a class="page-link"
+                            href="?page={{ current_page.previous_page_number }}">Previous</a></li>
+                    {% endif %}
+                    {% for page in paginator.page_range %}
+                    <li class="page-item {% if page == dragon_list.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if dragon_list.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ dragon_list.next_page_number }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -50,12 +91,9 @@
 {% block script %}
 <script>
     $('#dragon_table').DataTable({
-        "order": [9, 'DESC'],
         "scrollY": "80vh",
-        scrollCollapse: true,
-        paging: true,
-        pageLength: 10,
-        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+        "info": false,
+        "paging": false,
         dom: 'Bfrtip',
         language: { search: "" },
     });

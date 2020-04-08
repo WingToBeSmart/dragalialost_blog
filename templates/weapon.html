@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load thumbnail %}
 
 {% block content %}
 <div class="container">
@@ -8,42 +9,81 @@
             <table id="weapon_table" class="table table-hover row-border responsive">
                 <thead>
                     <tr>
-                        {% for th in weapon_table_head %}
-                        <th>{{ th|title }}</th>
-                        {% endfor %}
+                        <th>Icon</th>
+                        <th>Name</th>
+                        <th>Rarity</th>
+                        <th>Type</th>
+                        <th>Element</th>
+                        <th>HP</th>
+                        <th>Str</th>
+                        <th>Skills</th>
+                        <th>Ability 1</th>
+                        <th>Ability 2</th>
+                        <th>Release Date</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for tr in weapon_table_body %}
+                    {% for wea in weapon_list %}
                     <tr>
-                        {% for item in tr %}
-                        {% if forloop.counter == 1 %}
-                        <td><a href={{item.url}}><img src={{item.image}}></a></td>
-                        {% elif forloop.counter == 8  %}
                         <td>
-                            <span class="">{{item.skill_level.0}}:</span>
-                            <a href={{item.skill_url.0}}><img src={{item.skill_image.0}}>&nbsp;{{item.skill_name.0}}</a>
-                            <p class="">{{item.skill_description.0}}</p>
-                            <br>
-                            <span class="">{{item.skill_level.1}}:</span>
-                            <a href={{item.skill_url.1}}><img src={{item.skill_image.1}}>&nbsp;{{item.skill_name.1}}</a>
-                            <p class="">{{item.skill_description.1}}</p>
+                            <a href={{wea.url}}>
+                                {% thumbnail wea.icon "60x60"  as im %}
+                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                                {% endthumbnail %}
+                            </a>
                         </td>
-                        {% elif forloop.counter == 9 or forloop.counter == 10 %}
-                        {% if item.ability_url %}
-                        <td><a href={{item.ability_url}}><img src={{item.ability_image}}>&nbsp;{{item.ability_name}}</a>
+                        <td>{{ wea.name }}</td>
+                        <td>{{ wea.rarity }}</td>
+                        <td>{{ wea.weapon_type }}</td>
+                        <td>{{ wea.element }}</td>
+                        <td>{{ wea.hp }}</td>
+                        <td>{{ wea.Str }}</td>
+                        <td>
+                            {% thumbnail wea.skill.icon "24x24"  as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                            {% endthumbnail %}
+                            &nbsp;
+                            {{wea.skill.name}}
                         </td>
-                        {% else %}
-                        <td>-</td>
-                        {% endif %}
-                        {% else %}
-                        <td>{{ item | safe }}</td>
-                        {% endif %}
-                        {% endfor %}
+                        <td>
+                            {% thumbnail wea.ability_1.icon "24x24"  as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                            {% endthumbnail %}
+                            &nbsp;
+                            {{wea.ability_1.name}}
+                        </td>
+                        <td>
+                            {% thumbnail wea.ability_2.icon "24x24"  as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                            {% endthumbnail %}
+                            &nbsp;
+                            {{wea.ability_2.name}}
+                        </td>
+                        <td>{{wea.release_date|date:'Y-m-d'}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <br>
+            {% if is_paginated %}
+            <nav>
+                <ul class="pagination">
+                    {% if weapon_list.has_previous %}
+                    <li class="page-item"><a class="page-link"
+                            href="?page={{ current_page.previous_page_number }}">Previous</a></li>
+                    {% endif %}
+                    {% for page in paginator.page_range %}
+                    <li class="page-item {% if page == weapon_list.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if weapon_list.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ weapon_list.next_page_number }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -54,10 +94,8 @@
 <script>
     $('#weapon_table').DataTable({
         "scrollY": "80vh",
-        scrollCollapse: true,
-        paging: true,
-        pageLength: 10,
-        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+        "info": false,
+        "paging": false,
         dom: 'Bfrtip',
         language: { search: "" },
     });

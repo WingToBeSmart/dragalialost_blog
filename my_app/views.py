@@ -1,6 +1,8 @@
 import requests
 import pandas as pd
 from django.shortcuts import render
+from django.core.paginator import InvalidPage, Paginator
+from django.http import Http404
 from bs4 import BeautifulSoup
 from requests.compat import quote_plus
 from selenium import webdriver
@@ -96,7 +98,7 @@ def home(request):
 
     # render all list to frontend
     stuff_for_frontend = {
-        'news_response_lists': News.objects.all(),
+        'news_response_lists': News.objects.all().values('id', 'url', 'image', 'name', 'release_date', 'category'),
         'showcase_response_lists': showcase_response_lists,
         'new_adventurers_response_lists': new_adventurers_response_lists,
         'new_dragons_response_lists': new_dragons_response_lists,
@@ -112,187 +114,84 @@ def home(request):
 
 
 def adventurer(request):
+    # adventurer = Adventurer.objects.all()
     adventurer = Adventurer.objects.order_by('-release_date')
+    paginator = Paginator(adventurer, 10, orphans=5)
 
+    is_paginated = True if paginator.num_pages > 1 else False
+    page = request.GET.get('page') or 1
+    try:
+        current_page = paginator.page(page)
+    except InvalidPage as e:
+        raise Http404(str(e))
     # render data to frontend
+    # print(adventurer[0].skill_1)
     stuff_for_frontend = {
-        'adventurer_list': adventurer,
+        'adventurer_list': current_page,
+        'is_paginated': is_paginated,
+        'paginator': paginator
     }
 
     return render(request, 'adventurer.html', stuff_for_frontend)
 
 
 def dragon(request):
-    response = requests.get(BASE_URL.format('/Dragon_List'))
-    soup = BeautifulSoup(response.text, features='html.parser')
+    dragon = Dragon.objects.order_by('-release_date')
+    paginator = Paginator(dragon, 10, orphans=5)
 
-    dragon_table = soup.find('table', class_='wikitable sortable')
-    dragon_table_body = []
-    dragon_table_head = [cells.get_text(strip=True)
-                         for cells in dragon_table.find_all('th')]
-
-    for row in dragon_table.find_all('tr')[1:]:
-        cells = row.find_all('td')
-        for idx, item in enumerate(cells):
-            if(idx == 0):
-                cells[idx] = {
-                    'name': cells[idx].find('a').get('title'),
-                    'image': cells[idx].find('img').get('src'),
-                    'url': BASE_URL.format(cells[idx].find('a').get('href')),
-                }
-            elif(idx == 6):
-                cells[idx] = {
-                    'skill_name': cells[idx].find('a').get('title'),
-                    'skill_image': cells[idx].find('img').get('src'),
-                    'skill_url': BASE_URL.format(cells[idx].find('a').get('href')),
-                    'skill_description': cells[idx].find('div', class_='tooltiptext').text.split(']')[0:-1],
-                }
-            elif(idx == 7 or idx == 8):
-                image_list = []
-                name_list = []
-                url_list = []
-                for span_tag in cells[idx].find_all('span'):
-                    if(span_tag.find('img')):
-                        image_list.append(span_tag.find('img').get('src'))
-                    if(span_tag.find('a')):
-                        name_list.append(span_tag.find('a').get('title'))
-                        url_list.append(BASE_URL.format(
-                            span_tag.find('a').get('href')))
-
-                cells[idx] = {
-                    'ability_level': ['Lv. 1', 'Lv. 2'],
-                    'ability_name': name_list,
-                    'ability_image': image_list,
-                    'ability_url': url_list,
-                    'ability_description': [i.text for i in cells[idx].find_all('div', class_="tooltiptext")],
-                }
-            elif(idx == 9):
-                cells[idx] = datetime.strptime(
-                    cells[idx].get_text(strip=True), "%b %d, %Y").strftime('%Y-%m-%d')
-            else:
-                cells[idx] = cells[idx].get_text(strip=True)
-
-        dragon_table_body.append(cells)
-
+    is_paginated = True if paginator.num_pages > 1 else False
+    page = request.GET.get('page') or 1
+    try:
+        current_page = paginator.page(page)
+    except InvalidPage as e:
+        raise Http404(str(e))
     # render data to frontend
+
     stuff_for_frontend = {
-        'dragon_table_head': dragon_table_head,
-        'dragon_table_body': dragon_table_body,
+        'dragon_list': current_page,
+        'is_paginated': is_paginated,
+        'paginator': paginator
     }
 
     return render(request, 'dragon.html', stuff_for_frontend)
 
 
 def wyrmprint(request):
-    response = requests.get(BASE_URL.format('/Wyrmprint_List'))
-    soup = BeautifulSoup(response.text, features='html.parser')
+    wyrmprint = Wyrmprint.objects.order_by('-release_date')
+    paginator = Paginator(wyrmprint, 10, orphans=5)
 
-    wyrmprint_table = soup.find('table', class_='wikitable sortable')
-    wyrmprint_table_body = []
-    wyrmprint_table_head = [cells.get_text(strip=True)
-                            for cells in wyrmprint_table.find_all('th')]
-
-    for row in wyrmprint_table.find_all('tr')[1:]:
-        cells = row.find_all('td')
-        for idx, item in enumerate(cells):
-            if(idx == 0):
-                cells[idx] = {
-                    'name': cells[idx].find('a').get('title'),
-                    'image': cells[idx].find('img').get('src'),
-                    'url': BASE_URL.format(cells[idx].find('a').get('href')),
-                }
-            elif(idx == 5 or idx == 6 or idx == 7):
-                image_list = []
-                name_list = []
-                url_list = []
-                for span_tag in cells[idx].find_all('span'):
-                    if(span_tag.find('img')):
-                        image_list.append(span_tag.find('img').get('src'))
-                    if(span_tag.find('a')):
-                        name_list.append(span_tag.find('a').get('title'))
-                        url_list.append(BASE_URL.format(
-                            span_tag.find('a').get('href')))
-
-                cells[idx] = {
-                    'ability_level': ['Lv. 1', 'Lv. 2', 'Lv. 3'],
-                    'ability_name': name_list,
-                    'ability_image': image_list,
-                    'ability_url': url_list,
-                    'ability_description': [i.text for i in cells[idx].find_all('div', class_="tooltiptext")],
-                }
-            elif(idx == 8):
-                cells[idx] = datetime.strptime(
-                    cells[idx].get_text(strip=True), "%b %d, %Y").strftime('%Y-%m-%d')
-            else:
-                cells[idx] = cells[idx].get_text(strip=True)
-
-        wyrmprint_table_body.append(cells)
-
+    is_paginated = True if paginator.num_pages > 1 else False
+    page = request.GET.get('page') or 1
+    try:
+        current_page = paginator.page(page)
+    except InvalidPage as e:
+        raise Http404(str(e))
     # render data to frontend
-    stuff_for_frontend = {
-        'wyrmprint_table_head': wyrmprint_table_head,
-        'wyrmprint_table_body': wyrmprint_table_body,
-    }
 
+    stuff_for_frontend = {
+        'wyrmprint_list': current_page,
+        'is_paginated': is_paginated,
+        'paginator': paginator
+    }
     return render(request, 'wyrmprint.html', stuff_for_frontend)
 
 
 def weapon(request):
-    response = requests.get(BASE_URL.format('/Weapon_List'))
-    soup = BeautifulSoup(response.text, features='html.parser')
+    weapon = Weapon.objects.order_by('-rarity')
+    paginator = Paginator(weapon, 10, orphans=5)
 
-    weapon_table = soup.find('table', class_='wikitable sortable center')
-    weapon_table_body = []
-    weapon_table_head = [cells.get_text(strip=True)
-                         for cells in weapon_table.find_all('th')]
-
-    for row in weapon_table.find_all('tr')[1:]:
-        cells = row.find_all('td')
-        for idx, item in enumerate(cells):
-            if(idx == 0):
-                cells[idx] = {
-                    'name': cells[idx].find('a').get('title'),
-                    'image': cells[idx].find('img').get('src'),
-                    'url': BASE_URL.format(cells[idx].find('a').get('href')),
-                }
-            elif(idx == 7):
-                image_list = []
-                name_list = []
-                url_list = []
-                for span_tag in cells[idx].find_all('span'):
-                    if(span_tag.find('img')):
-                        image_list.append(span_tag.find('img').get('src'))
-                    if(span_tag.find('a')):
-                        name_list.append(span_tag.find('a').get('title'))
-                        url_list.append(BASE_URL.format(
-                            span_tag.find('a').get('href')))
-                cells[idx] = {
-                    'skill_level': ['Lv. 1', 'Lv. 2'],
-                    'skill_name': name_list,
-                    'skill_image': image_list,
-                    'skill_url': url_list,
-                    'skill_description': cells[idx].text.split(']')[0:-1],
-                }
-            elif(idx == 8 or idx == 9):
-                if(cells[idx].find('div', class_='tooltip')):
-                    cells[idx] = {
-                        'ability_name': cells[idx].find('a').get('title'),
-                        'ability_image': cells[idx].find('img').get('src'),
-                        'ability_url': BASE_URL.format(cells[idx].find('a').get('href')),
-                        'ability_description': cells[idx].find('div', class_='tooltiptext').text,
-                    }
-            elif(idx == 10):
-                cells[idx] = datetime.strptime(
-                    cells[idx].get_text(strip=True), "%b %d, %Y").strftime('%Y-%m-%d')
-            else:
-                cells[idx] = cells[idx].get_text(strip=True)
-
-        weapon_table_body.append(cells)
-
+    is_paginated = True if paginator.num_pages > 1 else False
+    page = request.GET.get('page') or 1
+    try:
+        current_page = paginator.page(page)
+    except InvalidPage as e:
+        raise Http404(str(e))
     # render data to frontend
+
     stuff_for_frontend = {
-        'weapon_table_head': weapon_table_head,
-        'weapon_table_body': weapon_table_body,
+        'weapon_list': current_page,
+        'is_paginated': is_paginated,
+        'paginator': paginator
     }
 
     return render(request, 'weapon.html', stuff_for_frontend)

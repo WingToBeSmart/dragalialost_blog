@@ -3,6 +3,7 @@ from datetime import datetime
 from django.core.files import File
 from urllib.request import urlopen
 from tempfile import NamedTemporaryFile
+from sorl.thumbnail import ImageField
 # Create your models here.
 
 
@@ -16,7 +17,7 @@ def upload_image(instance, filename):
 
 class Skill(models.Model):
     name = models.CharField(max_length=50)
-    icon = models.ImageField(upload_to=upload_icon, blank=True, null=True,)
+    icon = ImageField(upload_to=upload_icon, blank=True, null=True,)
     icon_url = models.URLField()
     level_1 = models.CharField(max_length=255, blank=True, null=True)
     level_2 = models.CharField(max_length=255, blank=True, null=True)
@@ -42,7 +43,7 @@ class Skill(models.Model):
 
 class Ability(models.Model):
     name = models.CharField(max_length=50)
-    icon = models.ImageField(upload_to=upload_icon, blank=True, null=True,)
+    icon = ImageField(upload_to=upload_icon, blank=True, null=True,)
     icon_url = models.URLField()
     level = models.CharField(max_length=5, blank=True, null=True)
     description = models.CharField(max_length=255, blank=True, null=True)
@@ -66,7 +67,7 @@ class Ability(models.Model):
 
 class AdventurerAbility(models.Model):
     name = models.CharField(max_length=50)
-    icon = models.ImageField(upload_to=upload_icon, blank=True, null=True,)
+    icon = ImageField(upload_to=upload_icon, blank=True, null=True,)
     icon_url = models.URLField()
 
     def __str__(self):
@@ -88,7 +89,7 @@ class AdventurerAbility(models.Model):
 
 class WeaponAbility(models.Model):
     name = models.CharField(max_length=50)
-    icon = models.ImageField(upload_to=upload_icon, blank=True, null=True,)
+    icon = ImageField(upload_to=upload_icon, blank=True, null=True,)
     icon_url = models.URLField()
     description = models.CharField(max_length=255, blank=True, null=True)
 
@@ -127,9 +128,9 @@ class Adventurer(models.Model):
     gender = models.CharField(max_length=10, blank=True, null=True)
     race = models.CharField(max_length=15, blank=True, null=True)
     obtained_form = models.CharField(max_length=50, blank=True, null=True)
-    icon = models.ImageField(upload_to=upload_icon, blank=True, null=True,)
+    icon = ImageField(upload_to=upload_icon, blank=True, null=True,)
     icon_url = models.URLField()
-    image = models.ImageField(
+    image = ImageField(
         upload_to=upload_image, blank=True, null=True,)
     image_url = models.URLField()
     url = models.URLField()
@@ -188,9 +189,9 @@ class Dragon(models.Model):
     favorite_gift = models.CharField(max_length=30, blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True)
     obtained_form = models.CharField(max_length=50, blank=True, null=True)
-    icon = models.ImageField(upload_to=upload_icon, blank=True, null=True,)
+    icon = ImageField(upload_to=upload_icon, blank=True, null=True,)
     icon_url = models.URLField()
-    image = models.ImageField(
+    image = ImageField(
         upload_to=upload_image, blank=True, null=True,)
     image_url = models.URLField()
     url = models.URLField()
@@ -238,9 +239,9 @@ class Wyrmprint(models.Model):
     base_max_might = models.CharField(max_length=6, blank=True, null=True)
     favorite_gift = models.CharField(max_length=30, blank=True, null=True)
     obtained_form = models.CharField(max_length=50, blank=True, null=True)
-    icon = models.ImageField(upload_to=upload_icon, blank=True, null=True,)
+    icon = ImageField(upload_to=upload_icon, blank=True, null=True,)
     icon_url = models.URLField()
-    image = models.ImageField(
+    image = ImageField(
         upload_to=upload_image, blank=True, null=True,)
     image_url = models.URLField()
     url = models.URLField()
@@ -290,9 +291,9 @@ class Weapon(models.Model):
     base_max_might = models.CharField(max_length=6, blank=True, null=True)
     favorite_gift = models.CharField(max_length=30, blank=True, null=True)
     obtained_form = models.CharField(max_length=50, blank=True, null=True)
-    icon = models.ImageField(upload_to=upload_icon, blank=True, null=True,)
+    icon = ImageField(upload_to=upload_icon, blank=True, null=True,)
     icon_url = models.URLField()
-    image = models.ImageField(
+    image = ImageField(
         upload_to=upload_image, blank=True, null=True,)
     image_url = models.URLField()
     url = models.URLField()
@@ -333,7 +334,7 @@ class News(models.Model):
     category = models.CharField(max_length=20)
     content = models.CharField(max_length=255, blank=True, null=True,)
     status = models.IntegerField(default=1)
-    image = models.ImageField(
+    image = ImageField(
         upload_to=upload_image, blank=True, null=True,)
     image_url = models.URLField()
     url = models.URLField()

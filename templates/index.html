@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load thumbnail %}
 
 {% block content %}
 <div class="container">
@@ -9,7 +10,11 @@
                 <div class="col s4">
                     <div class="card">
                         <div class="card-image">
-                            <a target="_blank" href="{{ new.url }}"><img src="{{ new.image }}" alt=""></a>
+                            <a target="_blank" href="{{ new.url }}">
+                                {% thumbnail new.image "250x250"  as im %}
+                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                                {% endthumbnail %}
+                            </a>
                         </div>
                         <div class="card-content">
                             <p>{{ new.name }}</p>

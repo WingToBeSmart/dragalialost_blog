@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load thumbnail %}
 
 {% block content %}
 <div class="container">
@@ -8,42 +9,87 @@
             <table id="wyrmprint_table" class="table table-hover row-border responsive">
                 <thead>
                     <tr>
-                        {% for th in wyrmprint_table_head %}
-                        <th>{{ th|title }}</th>
-                        {% endfor %}
+                        <th>Icon</th>
+                        <th>Name</th>
+                        <th>Rarity</th>
+                        <th>HP</th>
+                        <th>Str</th>
+                        <th>Ability 1</th>
+                        <th>Ability 2</th>
+                        <th>Ability 3</th>
+                        <th>Release Date</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for tr in wyrmprint_table_body %}
+                    {% for wyr in wyrmprint_list %}
                     <tr>
-                        {% for item in tr %}
-                        {% if forloop.counter == 1 %}
-                        <td><a href={{item.url}}><img src={{item.image}}></a></td>
-                        {% elif forloop.counter == 6 or forloop.counter == 7 or forloop.counter == 8 %}
                         <td>
-                            <span class="">{{item.ability_level.0}}:</span>
-                            <a href={{item.ability_url.0}}><img
-                                    src={{item.ability_image.0}}>&nbsp;{{item.ability_name.0}}</a>
-                            <p class="">{{item.ability_description.0}}</p>
-                            <br>
-                            <span class="">{{item.ability_level.1}}:</span>
-                            <a href={{item.ability_url.1}}><img
-                                    src={{item.ability_image.1}}>&nbsp;{{item.ability_name.1}}</a>
-                            <p class="">{{item.ability_description.1}}</p>
-                            <br>
-                            <span class="">{{item.ability_level.2}}:</span>
-                            <a href={{item.ability_url.2}}><img
-                                    src={{item.ability_image.2}}>&nbsp;{{item.ability_name.2}}</a>
-                            <p class="">{{item.ability_description.2}}</p>
+                            <a href={{wyr.url}}>
+                                {% thumbnail wyr.icon "60x60"  as im %}
+                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                                {% endthumbnail %}
+                            </a>
                         </td>
-                        {% else %}
-                        <td>{{ item | safe }}</td>
-                        {% endif %}
-                        {% endfor %}
+                        <td>{{ wyr.name }}</td>
+                        <td>{{ wyr.rarity }}</td>
+                        <td>{{ wyr.hp }}</td>
+                        <td>{{ wyr.Str }}</td>
+                        <td>
+                            {% for ab in wyr.ability_1.all %}
+                            {% thumbnail ab.icon "24x24"  as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                            {% endthumbnail %}
+                            &nbsp;
+                            {{ab.name}}
+                            <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for ab in wyr.ability_2.all %}
+                            {% thumbnail ab.icon "24x24"  as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                            {% endthumbnail %}
+                            &nbsp;
+                            {{ab.name}}
+                            <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for ab in wyr.ability_3.all %}
+                            {% thumbnail ab.icon "24x24"  as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                            {% endthumbnail %}
+                            &nbsp;
+                            {{ab.name}}
+                            <br>
+                            {% endfor %}
+                        </td>
+                        <td>{{wyr.release_date|date:'Y-m-d'}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <br>
+            {% if is_paginated %}
+            <nav>
+                <ul class="pagination">
+                    {% if wyrmprint_list.has_previous %}
+                    <li class="page-item"><a class="page-link"
+                            href="?page={{ current_page.previous_page_number }}">Previous</a></li>
+                    {% endif %}
+                    {% for page in paginator.page_range %}
+                    <li class="page-item {% if page == wyrmprint_list.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if wyrmprint_list.has_next %}
+                    <li class="page-item"><a class="page-link"
+                            href="?page={{ wyrmprint_list.next_page_number }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -53,12 +99,9 @@
 {% block script %}
 <script>
     $('#wyrmprint_table').DataTable({
-        "order": [8, 'DESC'],
         "scrollY": "80vh",
-        scrollCollapse: true,
-        paging: true,
-        pageLength: 10,
-        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+        "info": false,
+        "paging": false,
         dom: 'Bfrtip',
         language: { search: "" },
     });
